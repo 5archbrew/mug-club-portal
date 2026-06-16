@@ -49,8 +49,9 @@
     .avatar { width:50px; height:50px; border-radius:50%; background:var(--amber-lt); color:var(--amber); font-size:1.3rem; font-weight:800; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
     .member-name  { font-size:1.15rem; font-weight:700; color:var(--gray-800); }
     .member-since { font-size:.82rem; color:var(--gray-400); margin-top:2px; }
-    .tabs { display:flex; gap:4px; border-bottom:2px solid var(--gray-200); margin-bottom:20px; }
-    .tab { padding:8px 14px; font-size:.88rem; font-weight:600; color:var(--gray-600); border:none; background:none; cursor:pointer; border-bottom:2px solid transparent; margin-bottom:-2px; border-radius:4px 4px 0 0; transition:color .15s; }
+    .tabs { display:flex; gap:4px; border-bottom:2px solid var(--gray-200); margin-bottom:20px; overflow-x:auto; -webkit-overflow-scrolling:touch; flex-wrap:nowrap; }
+    .tabs::-webkit-scrollbar { display:none; } /* hide scrollbar on iOS */
+    .tab { padding:8px 10px; font-size:.82rem; font-weight:600; color:var(--gray-600); border:none; background:none; cursor:pointer; border-bottom:2px solid transparent; margin-bottom:-2px; border-radius:4px 4px 0 0; transition:color .15s; flex-shrink:0; white-space:nowrap; }
     .tab:hover  { color:var(--amber); }
     .tab.active { color:var(--amber); border-bottom-color:var(--amber); }
     .tab-panel        { display:none; }
@@ -740,30 +741,50 @@ function loadHistory() {
       container.innerHTML = "";
 
       // Header row
-      var table = document.createElement("table");
-      table.style.cssText = "width:100%;border-collapse:collapse;font-size:.88rem;";
-      table.innerHTML =
-        "<thead><tr>" +
-        "<th style='text-align:left;padding:6px 8px;color:var(--gray-400);font-size:.72rem;text-transform:uppercase;letter-spacing:.4px;border-bottom:2px solid var(--gray-200);'>Invoice</th>" +
-        "<th style='text-align:left;padding:6px 8px;color:var(--gray-400);font-size:.72rem;text-transform:uppercase;letter-spacing:.4px;border-bottom:2px solid var(--gray-200);'>Date</th>" +
-        "<th style='text-align:right;padding:6px 8px;color:var(--gray-400);font-size:.72rem;text-transform:uppercase;letter-spacing:.4px;border-bottom:2px solid var(--gray-200);'>Amount</th>" +
-        "<th style='text-align:center;padding:6px 8px;color:var(--gray-400);font-size:.72rem;text-transform:uppercase;letter-spacing:.4px;border-bottom:2px solid var(--gray-200);'>Status</th>" +
-        "</tr></thead><tbody></tbody>";
-      var tbody = table.querySelector("tbody");
+      // Render as cards on mobile, table on wider screens
+      var isMobile = window.innerWidth < 480;
 
-      r.history.forEach(function(inv) {
-        var isPaid = inv.status === "Paid";
-        var tr = document.createElement("tr");
-        tr.innerHTML =
-          "<td style='padding:8px;border-bottom:1px solid var(--gray-100);color:var(--gray-800);'>#" + escHtml(String(inv.invoiceNum)) + "</td>" +
-          "<td style='padding:8px;border-bottom:1px solid var(--gray-100);color:var(--gray-600);'>" + escHtml(String(inv.date)) + "</td>" +
-          "<td style='padding:8px;border-bottom:1px solid var(--gray-100);color:var(--gray-800);text-align:right;'>$" + parseFloat(inv.amount).toFixed(2) + "</td>" +
-          "<td style='padding:8px;border-bottom:1px solid var(--gray-100);text-align:center;'>" +
-          "<span class='badge " + (isPaid ? "badge-active" : "badge-expired") + "'>" + escHtml(inv.status) + "</span></td>";
-        tbody.appendChild(tr);
-      });
+      if (!isMobile) {
+        var table = document.createElement("table");
+        table.style.cssText = "width:100%;border-collapse:collapse;font-size:.88rem;";
+        table.innerHTML =
+          "<thead><tr>" +
+          "<th style='text-align:left;padding:6px 8px;color:var(--gray-400);font-size:.72rem;text-transform:uppercase;letter-spacing:.4px;border-bottom:2px solid var(--gray-200);'>Invoice</th>" +
+          "<th style='text-align:left;padding:6px 8px;color:var(--gray-400);font-size:.72rem;text-transform:uppercase;letter-spacing:.4px;border-bottom:2px solid var(--gray-200);'>Date</th>" +
+          "<th style='text-align:right;padding:6px 8px;color:var(--gray-400);font-size:.72rem;text-transform:uppercase;letter-spacing:.4px;border-bottom:2px solid var(--gray-200);'>Amount</th>" +
+          "<th style='text-align:center;padding:6px 8px;color:var(--gray-400);font-size:.72rem;text-transform:uppercase;letter-spacing:.4px;border-bottom:2px solid var(--gray-200);'>Status</th>" +
+          "</tr></thead><tbody></tbody>";
+        var tbody = table.querySelector("tbody");
 
-      container.appendChild(table);
+        r.history.forEach(function(inv) {
+          var isPaid = inv.status === "Paid";
+          var tr = document.createElement("tr");
+          tr.innerHTML =
+            "<td style='padding:8px;border-bottom:1px solid var(--gray-100);color:var(--gray-800);'>#" + escHtml(String(inv.invoiceNum)) + "</td>" +
+            "<td style='padding:8px;border-bottom:1px solid var(--gray-100);color:var(--gray-600);'>" + escHtml(String(inv.date)) + "</td>" +
+            "<td style='padding:8px;border-bottom:1px solid var(--gray-100);color:var(--gray-800);text-align:right;'>$" + parseFloat(inv.amount).toFixed(2) + "</td>" +
+            "<td style='padding:8px;border-bottom:1px solid var(--gray-100);text-align:center;'>" +
+            "<span class='badge " + (isPaid ? "badge-active" : "badge-expired") + "'>" + escHtml(inv.status) + "</span></td>";
+          tbody.appendChild(tr);
+        });
+
+        container.appendChild(table);
+      } else {
+        // Mobile: one card per invoice
+        r.history.forEach(function(inv) {
+          var isPaid = inv.status === "Paid";
+          var card = document.createElement("div");
+          card.style.cssText = "background:var(--gray-50);border-radius:8px;padding:12px 14px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center;";
+          card.innerHTML =
+            "<div>" +
+            "<div style='font-size:.78rem;color:var(--gray-400);text-transform:uppercase;letter-spacing:.4px;'>Invoice #" + escHtml(String(inv.invoiceNum)) + "</div>" +
+            "<div style='font-size:.95rem;color:var(--gray-800);font-weight:600;margin-top:2px;'>$" + parseFloat(inv.amount).toFixed(2) + "</div>" +
+            "<div style='font-size:.82rem;color:var(--gray-600);margin-top:2px;'>" + escHtml(String(inv.date)) + "</div>" +
+            "</div>" +
+            "<span class='badge " + (isPaid ? "badge-active" : "badge-expired") + "'>" + escHtml(inv.status) + "</span>";
+          container.appendChild(card);
+        });
+      }
     },
     function(e) {
       document.getElementById("history-container").innerHTML =

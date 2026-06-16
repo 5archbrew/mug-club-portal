@@ -2,7 +2,7 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
   <title>Mug Club Member Portal</title>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -78,6 +78,31 @@
     .record-tab { padding:6px 14px; border-radius:999px; font-size:.83rem; font-weight:600; border:1.5px solid var(--gray-200); background:#fff; cursor:pointer; color:var(--gray-600); }
     .record-tab.active { border-color:var(--amber); background:var(--amber-lt); color:var(--amber); }
     .cancel-notice { font-size:.82rem; color:var(--red); background:var(--red-lt); border-radius:6px; padding:7px 12px; margin-top:10px; }
+    /* ── iOS overflow fixes ── */
+    html, body {
+      overflow-x: hidden;
+      -webkit-overflow-scrolling: touch;
+      width: 100%;
+    }
+    * { -webkit-box-sizing: border-box; box-sizing: border-box; }
+
+    /* Collapse info grid to single column on narrow screens */
+    @media (max-width: 400px) {
+      .info-grid { grid-template-columns: 1fr; }
+      .info-item.full { grid-column: 1; }
+      .field-row-2 { grid-template-columns: 1fr; }
+      .field-row-3 { grid-template-columns: 1fr; }
+      .card { padding: 18px 14px; }
+      .tabs { overflow-x: auto; -webkit-overflow-scrolling: touch; flex-wrap: nowrap; }
+      .tab { flex-shrink: 0; }
+      .record-tabs { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    }
+
+    @media (max-width: 500px) {
+      .member-header { flex-wrap: wrap; }
+      .modal { padding: 20px; }
+    }
+
     .hidden { display:none !important; }
     .field-error { font-size:.78rem; color:var(--red); margin-top:3px; min-height:1rem; display:block; }
     input.invalid { border-color:var(--red) !important; }

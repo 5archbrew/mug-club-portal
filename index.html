@@ -6,25 +6,38 @@
   <title>Mug Club Member Portal</title>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { overflow-x: hidden; -webkit-overflow-scrolling: touch; width: 100%; }
+
     :root {
-      --amber:     #b45309; --amber-lt:  #fef3c7; --amber-md:  #fcd34d;
-      --green:     #15803d; --green-lt:  #dcfce7;
-      --red:       #b91c1c; --red-lt:    #fee2e2;
-      --gray-50:   #f9fafb; --gray-100:  #f3f4f6; --gray-200:  #e5e7eb;
-      --gray-400:  #9ca3af; --gray-600:  #4b5563; --gray-800:  #1f2937;
-      --blue:      #1d4ed8; --blue-lt:   #eff6ff;
+      --amber:    #b45309; --amber-lt: #fef3c7; --amber-md: #fcd34d;
+      --green:    #15803d; --green-lt: #dcfce7;
+      --red:      #b91c1c; --red-lt:   #fee2e2;
+      --gray-50:  #f9fafb; --gray-100: #f3f4f6; --gray-200: #e5e7eb;
+      --gray-400: #9ca3af; --gray-600: #4b5563; --gray-800: #1f2937;
+      --blue:     #1d4ed8; --blue-lt:  #eff6ff;
     }
+
     body { font-family:'Segoe UI',Arial,sans-serif; background:var(--gray-100); min-height:100vh; display:flex; flex-direction:column; align-items:center; padding:24px 16px 48px; }
+
     .card { background:#fff; border-radius:12px; box-shadow:0 1px 8px rgba(0,0,0,.08); padding:28px; width:100%; max-width:500px; margin-bottom:16px; }
     .card-title { font-size:.75rem; font-weight:700; text-transform:uppercase; letter-spacing:.6px; color:var(--gray-400); margin-bottom:14px; }
     .portal-logo { font-size:1.4rem; font-weight:800; color:var(--amber); text-align:center; margin-bottom:6px; }
-    .portal-sub  { text-align:center; color:var(--gray-600); font-size:.9rem; margin-bottom:24px; }
+    .portal-sub  { text-align:center; color:var(--gray-600); font-size:.9rem; margin-bottom:20px; }
+
     label { display:block; font-size:.85rem; font-weight:600; color:var(--gray-600); margin-bottom:5px; }
-    input[type="email"],input[type="text"],input[type="tel"],input[type="date"],select { width:100%; padding:10px 13px; border:1.5px solid var(--gray-200); border-radius:8px; font-size:.97rem; outline:none; transition:border-color .15s; background:#fff; }
-    input:focus,select:focus { border-color:var(--amber); }
+    input[type="email"],input[type="text"],input[type="tel"],input[type="date"] {
+      width:100%; padding:10px 13px; border:1.5px solid var(--gray-200);
+      border-radius:8px; font-size:.97rem; outline:none; transition:border-color .15s; background:#fff;
+    }
+    input:focus { border-color:var(--amber); }
+    input.invalid { border-color:var(--red) !important; }
+    input.valid   { border-color:var(--green) !important; }
+    .field-error  { font-size:.78rem; color:var(--red); margin-top:3px; min-height:1rem; display:block; }
+
     .field-row   { margin-bottom:14px; }
     .field-row-2 { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:14px; }
     .field-row-3 { display:grid; grid-template-columns:2fr 1fr 1fr; gap:10px; margin-bottom:14px; }
+
     .btn { display:block; width:100%; padding:11px 16px; border:none; border-radius:8px; font-size:.97rem; font-weight:600; cursor:pointer; transition:opacity .15s,background .15s; text-align:center; }
     .btn:disabled { opacity:.5; cursor:not-allowed; }
     .btn-primary   { background:var(--amber); color:#fff; }
@@ -36,30 +49,36 @@
     .btn-success   { background:var(--green); color:#fff; }
     .btn-success:hover:not(:disabled)   { background:#166534; }
     .btn-sm { padding:7px 13px; font-size:.85rem; width:auto; display:inline-block; }
+
     .badge { display:inline-block; padding:3px 10px; border-radius:999px; font-size:.78rem; font-weight:700; text-transform:uppercase; letter-spacing:.4px; }
     .badge-active    { background:var(--green-lt); color:var(--green); }
     .badge-expired   { background:var(--amber-lt); color:var(--amber); }
     .badge-cancelled { background:var(--red-lt);   color:var(--red);   }
-    .info-grid  { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
-    .info-item  { background:var(--gray-50); border-radius:8px; padding:11px 13px; }
+
+    .info-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+    .info-item { background:var(--gray-50); border-radius:8px; padding:11px 13px; }
     .info-label { font-size:.72rem; font-weight:700; color:var(--gray-400); text-transform:uppercase; letter-spacing:.4px; }
     .info-value { font-size:.95rem; color:var(--gray-800); margin-top:2px; }
     .info-item.full { grid-column:1/-1; }
-    .member-header { display:flex; align-items:center; gap:14px; margin-bottom:20px; }
+
+    .member-header { display:flex; align-items:center; gap:14px; margin-bottom:20px; flex-wrap:wrap; }
     .avatar { width:50px; height:50px; border-radius:50%; background:var(--amber-lt); color:var(--amber); font-size:1.3rem; font-weight:800; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
     .member-name  { font-size:1.15rem; font-weight:700; color:var(--gray-800); }
     .member-since { font-size:.82rem; color:var(--gray-400); margin-top:2px; }
+
     .tabs { display:flex; gap:4px; border-bottom:2px solid var(--gray-200); margin-bottom:20px; overflow-x:auto; -webkit-overflow-scrolling:touch; flex-wrap:nowrap; }
-    .tabs::-webkit-scrollbar { display:none; } /* hide scrollbar on iOS */
-    .tab { padding:8px 10px; font-size:.82rem; font-weight:600; color:var(--gray-600); border:none; background:none; cursor:pointer; border-bottom:2px solid transparent; margin-bottom:-2px; border-radius:4px 4px 0 0; transition:color .15s; flex-shrink:0; white-space:nowrap; }
+    .tabs::-webkit-scrollbar { display:none; }
+    .tab { padding:8px 10px; font-size:.82rem; font-weight:600; color:var(--gray-600); border:none; background:none; cursor:pointer; border-bottom:2px solid transparent; margin-bottom:-2px; border-radius:4px 4px 0 0; flex-shrink:0; white-space:nowrap; }
     .tab:hover  { color:var(--amber); }
     .tab.active { color:var(--amber); border-bottom-color:var(--amber); }
     .tab-panel        { display:none; }
     .tab-panel.active { display:block; }
+
     .msg { padding:10px 14px; border-radius:7px; font-size:.88rem; margin-top:12px; display:none; }
     .msg.error   { background:var(--red-lt);   color:var(--red);   border:1px solid #fca5a5; }
     .msg.success { background:var(--green-lt); color:var(--green); border:1px solid #86efac; }
     .msg.info    { background:var(--blue-lt);  color:var(--blue);  border:1px solid #bfdbfe; }
+
     .event-item  { border-left:3px solid var(--amber); padding:10px 14px; margin-bottom:10px; background:var(--gray-50); border-radius:0 8px 8px 0; }
     .event-title { font-weight:700; color:var(--gray-800); }
     .event-date  { font-size:.82rem; color:var(--gray-600); margin-top:2px; }
@@ -67,53 +86,47 @@
     .event-desc  { font-size:.82rem; color:var(--gray-600); margin-top:4px; }
     .add-cal-link { font-size:.8rem; display:inline-block; margin-top:6px; color:var(--blue); text-decoration:none; }
     .add-cal-link:hover { text-decoration:underline; }
+
     .benefit-item { display:flex; align-items:flex-start; gap:10px; padding:10px 0; border-bottom:1px solid var(--gray-100); }
     .benefit-item:last-child { border-bottom:none; }
     .benefit-icon { font-size:1.3rem; flex-shrink:0; }
     .benefit-text { font-size:.92rem; color:var(--gray-800); }
+
     .topbar { width:100%; max-width:500px; display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; }
     .topbar-title  { font-size:1rem; font-weight:800; color:var(--amber); }
     .topbar-logout { font-size:.83rem; color:var(--gray-400); background:none; border:none; cursor:pointer; }
     .topbar-logout:hover { color:var(--red); }
+
     .record-tabs { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:16px; }
     .record-tab { padding:6px 14px; border-radius:999px; font-size:.83rem; font-weight:600; border:1.5px solid var(--gray-200); background:#fff; cursor:pointer; color:var(--gray-600); }
     .record-tab.active { border-color:var(--amber); background:var(--amber-lt); color:var(--amber); }
+
     .cancel-notice { font-size:.82rem; color:var(--red); background:var(--red-lt); border-radius:6px; padding:7px 12px; margin-top:10px; }
-    /* ── iOS overflow fixes ── */
-    html, body {
-      overflow-x: hidden;
-      -webkit-overflow-scrolling: touch;
-      width: 100%;
-    }
-    * { -webkit-box-sizing: border-box; box-sizing: border-box; }
 
-    /* Collapse info grid to single column on narrow screens */
-    @media (max-width: 400px) {
-      .info-grid { grid-template-columns: 1fr; }
-      .info-item.full { grid-column: 1; }
-      .field-row-2 { grid-template-columns: 1fr; }
-      .field-row-3 { grid-template-columns: 1fr; }
-      .card { padding: 18px 14px; }
-      .tabs { overflow-x: auto; -webkit-overflow-scrolling: touch; flex-wrap: nowrap; }
-      .tab { flex-shrink: 0; }
-      .record-tabs { overflow-x: auto; -webkit-overflow-scrolling: touch; }
-    }
-
-    @media (max-width: 500px) {
-      .member-header { flex-wrap: wrap; }
-      .modal { padding: 20px; }
-    }
-
-    .hidden { display:none !important; }
-    .field-error { font-size:.78rem; color:var(--red); margin-top:3px; min-height:1rem; display:block; }
-    input.invalid { border-color:var(--red) !important; }
-    input.valid   { border-color:var(--green) !important; }
     .modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,.45); display:flex; align-items:center; justify-content:center; z-index:100; padding:16px; }
     .modal { background:#fff; border-radius:12px; padding:28px; width:100%; max-width:420px; box-shadow:0 8px 32px rgba(0,0,0,.18); }
     .modal h3 { font-size:1.1rem; color:var(--gray-800); margin-bottom:8px; }
     .modal p  { font-size:.9rem;  color:var(--gray-600); margin-bottom:20px; }
     .modal-actions { display:flex; gap:10px; }
     .modal-actions .btn { margin:0; }
+
+    .hidden { display:none !important; }
+
+    /* ── Login toggle ── */
+    .login-toggle { display:flex; gap:0; margin-bottom:24px; border:1.5px solid var(--gray-200); border-radius:8px; overflow:hidden; }
+    .login-toggle button { flex:1; padding:9px; font-size:.9rem; font-weight:700; border:none; cursor:pointer; transition:background .15s,color .15s; }
+    .login-toggle .active-toggle { background:var(--amber); color:#fff; }
+    .login-toggle .inactive-toggle { background:#fff; color:var(--gray-600); }
+
+    /* ── Mobile responsive ── */
+    @media (max-width:400px) {
+      .info-grid { grid-template-columns:1fr; }
+      .info-item.full { grid-column:1; }
+      .field-row-2 { grid-template-columns:1fr; }
+      .field-row-3 { grid-template-columns:1fr; }
+      .card { padding:18px 14px; }
+      .modal { padding:20px; }
+    }
   </style>
 </head>
 <body>
@@ -123,25 +136,91 @@
   <div class="card">
     <div class="portal-logo">🍺 Mug Club</div>
     <div class="portal-sub">Member Portal</div>
-    <div id="step-email">
-      <div class="field-row">
-        <label for="email-input">Email address</label>
-        <input type="email" id="email-input" placeholder="you@example.com" autocomplete="email">
-      </div>
-      <p id="email-format-msg" style="font-size:.82rem;color:var(--red);margin-top:4px;min-height:1.1em;"></p>
-      <button class="btn btn-primary" id="send-btn" disabled>Send Login Code</button>
-      <div class="msg" id="email-msg"></div>
+
+    <!-- Toggle -->
+    <div class="login-toggle">
+      <button id="toggle-login-btn"  class="active-toggle">Log In</button>
+      <button id="toggle-signup-btn" class="inactive-toggle">Sign Up</button>
     </div>
-    <div id="step-code" class="hidden">
-      <p style="color:var(--gray-600);font-size:.9rem;margin-bottom:16px;" id="code-hint"></p>
-      <div class="field-row">
-        <label for="code-input">6-digit code</label>
-        <input type="text" id="code-input" placeholder="123456" maxlength="6" inputmode="numeric" style="font-size:1.4rem;letter-spacing:6px;text-align:center;">
+
+    <!-- LOG IN FLOW -->
+    <div id="login-flow">
+      <div id="step-email">
+        <div class="field-row">
+          <label for="email-input">Email address</label>
+          <input type="email" id="email-input" placeholder="you@example.com" autocomplete="email">
+        </div>
+        <p id="email-format-msg" style="font-size:.82rem;color:var(--red);margin-top:4px;min-height:1.1em;"></p>
+        <button class="btn btn-primary" id="send-btn" disabled>Send Login Code</button>
+        <div class="msg" id="email-msg"></div>
       </div>
-      <button class="btn btn-primary" id="verify-btn">Log In</button>
-      <button class="btn btn-secondary" id="back-btn">← Use a different email</button>
-      <div class="msg" id="code-msg"></div>
+      <div id="step-code" class="hidden">
+        <p style="color:var(--gray-600);font-size:.9rem;margin-bottom:16px;" id="code-hint"></p>
+        <div class="field-row">
+          <label for="code-input">6-digit code</label>
+          <input type="text" id="code-input" placeholder="123456" maxlength="6" inputmode="numeric" style="font-size:1.4rem;letter-spacing:6px;text-align:center;">
+        </div>
+        <button class="btn btn-primary" id="verify-btn">Log In</button>
+        <button class="btn btn-secondary" id="back-btn">← Use a different email</button>
+        <div class="msg" id="code-msg"></div>
+      </div>
     </div>
+
+    <!-- SIGN UP FLOW -->
+    <div id="signup-flow" class="hidden">
+      <div class="field-row-2">
+        <div>
+          <label>First Name</label>
+          <input type="text" id="signup-firstName">
+          <span class="field-error" id="err-signup-firstName"></span>
+        </div>
+        <div>
+          <label>Last Name</label>
+          <input type="text" id="signup-lastName">
+          <span class="field-error" id="err-signup-lastName"></span>
+        </div>
+      </div>
+      <div class="field-row">
+        <label>Email address</label>
+        <input type="email" id="signup-email">
+        <span class="field-error" id="err-signup-email"></span>
+      </div>
+      <div class="field-row">
+        <label>Birthday</label>
+        <input type="date" id="signup-birthday">
+        <span class="field-error" id="err-signup-birthday"></span>
+      </div>
+      <div class="field-row">
+        <label>Phone</label>
+        <input type="tel" id="signup-phone">
+        <span class="field-error" id="err-signup-phone"></span>
+      </div>
+      <div class="field-row">
+        <label>Street Address</label>
+        <input type="text" id="signup-street">
+        <span class="field-error" id="err-signup-street"></span>
+      </div>
+      <div class="field-row-3">
+        <div>
+          <label>City</label>
+          <input type="text" id="signup-city">
+          <span class="field-error" id="err-signup-city"></span>
+        </div>
+        <div>
+          <label>State</label>
+          <input type="text" id="signup-state" maxlength="2">
+          <span class="field-error" id="err-signup-state"></span>
+        </div>
+        <div>
+          <label>ZIP</label>
+          <input type="text" id="signup-zip" maxlength="10">
+          <span class="field-error" id="err-signup-zip"></span>
+        </div>
+      </div>
+      <button class="btn btn-success" id="signup-btn">Join the Mug Club 🍺</button>
+      <div class="msg" id="signup-msg"></div>
+    </div>
+
   </div>
 </div>
 
@@ -168,11 +247,11 @@
     </div>
 
     <div class="tabs">
-      <button class="tab active" id="tab-btn-profile"    >Profile</button>
-      <button class="tab"        id="tab-btn-membership" >Membership</button>
-      <button class="tab"        id="tab-btn-events"     >Events</button>
-      <button class="tab"        id="tab-btn-benefits"   >Benefits</button>
-      <button class="tab"        id="tab-btn-history"    >History</button>
+      <button class="tab active" id="tab-btn-profile">Profile</button>
+      <button class="tab" id="tab-btn-membership">Membership</button>
+      <button class="tab" id="tab-btn-events">Events</button>
+      <button class="tab" id="tab-btn-benefits">Benefits</button>
+      <button class="tab" id="tab-btn-history">History</button>
     </div>
 
     <!-- Profile tab -->
@@ -185,45 +264,45 @@
         <div class="field-row-2">
           <div>
             <label>First Name</label>
-            <input type="text" id="edit-firstName" onblur="validateField(this,'name')" oninput="clearFieldError(this)">
+            <input type="text" id="edit-firstName">
             <span class="field-error" id="err-edit-firstName"></span>
           </div>
           <div>
             <label>Last Name</label>
-            <input type="text" id="edit-lastName" onblur="validateField(this,'name')" oninput="clearFieldError(this)">
+            <input type="text" id="edit-lastName">
             <span class="field-error" id="err-edit-lastName"></span>
           </div>
         </div>
         <div class="field-row">
           <label>Phone</label>
-          <input type="tel" id="edit-phone" onblur="validateField(this,'phone')" oninput="clearFieldError(this)">
+          <input type="tel" id="edit-phone">
           <span class="field-error" id="err-edit-phone"></span>
         </div>
         <div class="field-row">
           <label>Street Address</label>
-          <input type="text" id="edit-street" oninput="clearFieldError(this)">
+          <input type="text" id="edit-street">
           <span class="field-error" id="err-edit-street"></span>
         </div>
         <div class="field-row-3">
           <div>
             <label>City</label>
-            <input type="text" id="edit-city" oninput="clearFieldError(this)">
+            <input type="text" id="edit-city">
             <span class="field-error" id="err-edit-city"></span>
           </div>
           <div>
             <label>State</label>
-            <input type="text" id="edit-state" maxlength="2" onblur="validateField(this,'state')" oninput="clearFieldError(this)">
+            <input type="text" id="edit-state" maxlength="2">
             <span class="field-error" id="err-edit-state"></span>
           </div>
           <div>
             <label>ZIP</label>
-            <input type="text" id="edit-zip" maxlength="10" onblur="validateField(this,'zip')" oninput="clearFieldError(this)">
+            <input type="text" id="edit-zip" maxlength="10">
             <span class="field-error" id="err-edit-zip"></span>
           </div>
         </div>
         <div class="field-row">
           <label>Birthday</label>
-          <input type="date" id="edit-birthday" onblur="validateField(this,'birthday')" oninput="clearFieldError(this)">
+          <input type="date" id="edit-birthday">
           <span class="field-error" id="err-edit-birthday"></span>
         </div>
         <button class="btn btn-primary"   id="save-profile-btn">Save Changes</button>
@@ -264,49 +343,49 @@
   <!-- Add membership card -->
   <div class="card" id="add-member-card" style="display:none;">
     <div class="card-title">Add a Membership</div>
-    <p style="font-size:.88rem;color:var(--gray-600);margin-bottom:16px;">Add a membership for someone else under your email address. After submitting, you'll be directed to complete payment.</p>
+    <p style="font-size:.88rem;color:var(--gray-600);margin-bottom:16px;">Add a membership for someone else under your email. After submitting, an invoice will be sent to your email.</p>
     <div class="field-row-2">
       <div>
         <label>First Name</label>
-        <input type="text" id="new-firstName" onblur="validateField(this,'name')" oninput="clearFieldError(this)">
+        <input type="text" id="new-firstName">
         <span class="field-error" id="err-new-firstName"></span>
       </div>
       <div>
         <label>Last Name</label>
-        <input type="text" id="new-lastName" onblur="validateField(this,'name')" oninput="clearFieldError(this)">
+        <input type="text" id="new-lastName">
         <span class="field-error" id="err-new-lastName"></span>
       </div>
     </div>
     <div class="field-row">
       <label>Phone</label>
-      <input type="tel" id="new-phone" onblur="validateField(this,'phone')" oninput="clearFieldError(this)">
+      <input type="tel" id="new-phone">
       <span class="field-error" id="err-new-phone"></span>
     </div>
     <div class="field-row">
       <label>Street Address</label>
-      <input type="text" id="new-street" oninput="clearFieldError(this)">
+      <input type="text" id="new-street">
       <span class="field-error" id="err-new-street"></span>
     </div>
     <div class="field-row-3">
       <div>
         <label>City</label>
-        <input type="text" id="new-city" oninput="clearFieldError(this)">
+        <input type="text" id="new-city">
         <span class="field-error" id="err-new-city"></span>
       </div>
       <div>
         <label>State</label>
-        <input type="text" id="new-state" maxlength="2" onblur="validateField(this,'state')" oninput="clearFieldError(this)">
+        <input type="text" id="new-state" maxlength="2">
         <span class="field-error" id="err-new-state"></span>
       </div>
       <div>
         <label>ZIP</label>
-        <input type="text" id="new-zip" maxlength="10" onblur="validateField(this,'zip')" oninput="clearFieldError(this)">
+        <input type="text" id="new-zip" maxlength="10">
         <span class="field-error" id="err-new-zip"></span>
       </div>
     </div>
     <div class="field-row">
       <label>Birthday</label>
-      <input type="date" id="new-birthday" onblur="validateField(this,'birthday')" oninput="clearFieldError(this)">
+      <input type="date" id="new-birthday">
       <span class="field-error" id="err-new-birthday"></span>
     </div>
     <button class="btn btn-success" id="submit-add-member-btn">Add Membership &amp; Pay</button>
@@ -330,57 +409,112 @@
 </div>
 
 <script>
+// ── State ────────────────────────────────────────────────────
 var currentEmail    = "";
 var allMembers      = [];
 var activeMemberIdx = 0;
 var verifyInFlight  = false;
 
-// Deployment URL — hardcoded because when embedded in Google Sites,
-// window.location.href returns the Sites URL, not the Apps Script URL.
-// Update this whenever you create a new deployment.
 var SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxL8bnX0yQX_JmTzdorfn7m0EiXctyPVSNFgAjN_HTpemrAzEFd_akk4Zo-5HcjM-RC/exec";
 
-// ── SERVER CALL HELPER ────────────────────────────────────────
-// Uses GET with query params instead of POST to avoid CORS
-// preflight blocks when running inside a Google Sites iframe.
+// ── SERVER CALL ───────────────────────────────────────────────
 function callServer(action, params, onSuccess, onFailure) {
   var url = SCRIPT_URL +
     "?action=" + encodeURIComponent(action) +
     "&params=" + encodeURIComponent(JSON.stringify(params || {}));
-
   fetch(url, { method: "GET" })
-    .then(function(response) {
-      if (!response.ok) throw new Error("HTTP " + response.status);
-      return response.json();
-    })
-    .then(function(data) {
-      if (onSuccess) onSuccess(data);
-    })
-    .catch(function(err) {
-      if (onFailure) onFailure(err);
-      else console.error("callServer error:", err);
-    });
+    .then(function(r) { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
+    .then(function(d) { if (onSuccess) onSuccess(d); })
+    .catch(function(e) { if (onFailure) onFailure(e); else console.error("callServer:", e); });
 }
 
+// ── DOM READY ─────────────────────────────────────────────────
+document.addEventListener("DOMContentLoaded", function() {
+  // Login
+  var emailInput = document.getElementById("email-input");
+  if (emailInput) emailInput.addEventListener("input", validateEmailInput);
+  document.getElementById("send-btn").addEventListener("click",   sendCode);
+  document.getElementById("verify-btn").addEventListener("click", verifyCode);
+  document.getElementById("back-btn").addEventListener("click",   goBack);
+  // Toggle
+  document.getElementById("toggle-login-btn").addEventListener("click",  showLoginFlow);
+  document.getElementById("toggle-signup-btn").addEventListener("click", showSignupFlow);
+  // Sign up
+  document.getElementById("signup-btn").addEventListener("click", submitSignup);
+  // Dashboard nav
+  document.getElementById("logout-btn").addEventListener("click", logout);
+  // Tabs via delegation
+  var tabsEl = document.querySelector(".tabs");
+  if (tabsEl) tabsEl.addEventListener("click", function(e) {
+    var btn = e.target.closest(".tab");
+    if (!btn) return;
+    switchTab(btn.id.replace("tab-btn-",""), btn);
+  });
+  // Profile
+  document.getElementById("edit-profile-btn").addEventListener("click",  startEditProfile);
+  document.getElementById("save-profile-btn").addEventListener("click",  saveProfile);
+  document.getElementById("cancel-edit-btn").addEventListener("click",   cancelEditProfile);
+  // Add member
+  document.getElementById("show-add-member-btn").addEventListener("click",   showAddMemberForm);
+  document.getElementById("submit-add-member-btn").addEventListener("click", submitAddMember);
+  document.getElementById("cancel-add-member-btn").addEventListener("click", function() {
+    document.getElementById("add-member-card").style.display = "none";
+  });
+  // Modal
+  document.getElementById("modal-cancel-btn").addEventListener("click", closeModal);
+  // Enter key
+  document.addEventListener("keydown", function(e) {
+    if (e.key !== "Enter" || (e.target && e.target.tagName === "BUTTON")) return;
+    if (!document.getElementById("step-code").classList.contains("hidden")) verifyCode();
+    else if (!document.getElementById("step-email").classList.contains("hidden")) sendCode();
+  });
+  // Blur validation for signup and edit forms
+  addBlurValidation("signup-");
+  addBlurValidation("edit-");
+  addBlurValidation("new-");
+});
 
+function addBlurValidation(prefix) {
+  var fields = { firstName:"name", lastName:"name", phone:"phone", state:"state", zip:"zip", birthday:"birthday" };
+  for (var f in fields) {
+    var el = document.getElementById(prefix + f);
+    if (el) (function(el, type) {
+      el.addEventListener("blur",  function() { validateField(el, type); });
+      el.addEventListener("input", function() { clearFieldError(el); });
+    })(el, fields[f]);
+  }
+  // Address fields just clear on input
+  ["street","city"].forEach(function(f) {
+    var el = document.getElementById(prefix + f);
+    if (el) el.addEventListener("input", function() { clearFieldError(el); });
+  });
+}
+
+// ── LOGIN / SIGNUP TOGGLE ─────────────────────────────────────
+function showLoginFlow() {
+  document.getElementById("login-flow").classList.remove("hidden");
+  document.getElementById("signup-flow").classList.add("hidden");
+  document.getElementById("toggle-login-btn").className  = "active-toggle";
+  document.getElementById("toggle-signup-btn").className = "inactive-toggle";
+}
+
+function showSignupFlow() {
+  document.getElementById("signup-flow").classList.remove("hidden");
+  document.getElementById("login-flow").classList.add("hidden");
+  document.getElementById("toggle-signup-btn").className = "active-toggle";
+  document.getElementById("toggle-login-btn").className  = "inactive-toggle";
+  clearMsg("signup-msg");
+}
 
 // ── LOGIN ────────────────────────────────────────────────────
 function validateEmailInput() {
-  var val  = document.getElementById("email-input").value.trim();
-  var btn  = document.getElementById("send-btn");
-  var msg  = document.getElementById("email-format-msg");
-  var re   = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-  if (!val) {
-    msg.textContent = "";
-    btn.disabled = true;
-  } else if (!re.test(val)) {
-    msg.textContent = "Please provide a valid email address.";
-    btn.disabled = true;
-  } else {
-    msg.textContent = "";
-    btn.disabled = false;
-  }
+  var val = document.getElementById("email-input").value.trim();
+  var btn = document.getElementById("send-btn");
+  var msg = document.getElementById("email-format-msg");
+  var re  = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!val) { msg.textContent = ""; btn.disabled = true; }
+  else if (!re.test(val)) { msg.textContent = "Please provide a valid email address."; btn.disabled = true; }
+  else { msg.textContent = ""; btn.disabled = false; }
 }
 
 function sendCode() {
@@ -399,17 +533,13 @@ function sendCode() {
         setTimeout(function(){ document.getElementById("code-input").focus(); }, 100);
       } else { showMsg("email-msg","error", r.message); }
     },
-    function(e) {
-      setLoading("send-btn", false, "Send Login Code");
-      showMsg("email-msg","error","Error: " + e.message);
-    }
+    function(e) { setLoading("send-btn", false, "Send Login Code"); showMsg("email-msg","error","Error: "+e.message); }
   );
 }
 
 function verifyCode() {
-  if (verifyInFlight) { console.log("verifyCode: blocked, already in flight"); return; }
+  if (verifyInFlight) return;
   var code = document.getElementById("code-input").value.trim();
-  console.log("verifyCode called, code:", code, "email:", currentEmail);
   if (code.length !== 6) { showMsg("code-msg","error","Please enter the 6-digit code."); return; }
   verifyInFlight = true;
   setLoading("verify-btn", true, "Verifying…");
@@ -421,16 +551,10 @@ function verifyCode() {
       if (!r) { showMsg("code-msg","error","Server error. Please try again."); return; }
       if (r.success) {
         try { initDashboard(r.members); }
-        catch(err) { showMsg("code-msg","error","Dashboard error: " + err.message); }
-      } else {
-        showMsg("code-msg","error", r.message);
-      }
+        catch(err) { showMsg("code-msg","error","Dashboard error: "+err.message); }
+      } else { showMsg("code-msg","error", r.message); }
     },
-    function(e) {
-      verifyInFlight = false;
-      setLoading("verify-btn", false, "Log In");
-      showMsg("code-msg","error","Error: " + e.message);
-    }
+    function(e) { verifyInFlight=false; setLoading("verify-btn",false,"Log In"); showMsg("code-msg","error","Error: "+e.message); }
   );
 }
 
@@ -440,12 +564,68 @@ function goBack() {
   clearMsg("code-msg");
 }
 
-// ── DASHBOARD INIT ───────────────────────────────────────────
+// ── SIGN UP ───────────────────────────────────────────────────
+function submitSignup() {
+  var emailVal = document.getElementById("signup-email").value.trim();
+  var emailRe  = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailVal || !emailRe.test(emailVal)) { setFieldError("signup-email","Please enter a valid email address."); return; }
+  document.getElementById("signup-email").classList.remove("invalid"); document.getElementById("signup-email").classList.add("valid");
+  document.getElementById("err-signup-email").textContent = "";
+
+  // Validate required name fields first
+  var fnOk = validateField(document.getElementById("signup-firstName"), "name");
+  var lnOk = validateField(document.getElementById("signup-lastName"),  "name");
+  var bdOk = validateField(document.getElementById("signup-birthday"),  "birthday");
+  if (!fnOk || !lnOk) return;
+  if (!document.getElementById("signup-birthday").value) { setFieldError("signup-birthday","Birthday is required."); return; }
+
+  validateFormFields("signup-", function(addrOverrides) {
+    var data = {
+      firstName: document.getElementById("signup-firstName").value.trim(),
+      lastName:  document.getElementById("signup-lastName").value.trim(),
+      email:     emailVal,
+      birthday:  document.getElementById("signup-birthday").value,
+      phone:     document.getElementById("signup-phone").value.trim(),
+      street:    addrOverrides.street !== undefined ? addrOverrides.street : document.getElementById("signup-street").value.trim(),
+      city:      addrOverrides.city   !== undefined ? addrOverrides.city   : document.getElementById("signup-city").value.trim(),
+      state:     addrOverrides.state  !== undefined ? addrOverrides.state  : document.getElementById("signup-state").value.trim().toUpperCase(),
+      zip:       addrOverrides.zip    !== undefined ? addrOverrides.zip    : document.getElementById("signup-zip").value.trim()
+    };
+    showMsg("signup-msg","info","Creating your membership…");
+    document.getElementById("signup-btn").disabled = true;
+    callServer("addMembership", { email: data.email, newMemberData: data },
+      function(r) {
+        if (r && r.success) {
+          callServer("createMembershipInvoice", { email: data.email, rowIndex: r.newRowIndex },
+            function(inv) {
+              document.getElementById("signup-btn").disabled = false;
+              if (inv && inv.success) {
+                showMsg("signup-msg","success","Welcome to the Mug Club! 🍺 Invoice #"+inv.invoiceNum+" sent to "+data.email+". Click Pay Now in that email to activate your membership.");
+                ["firstName","lastName","email","birthday","phone","street","city","state","zip"].forEach(function(f){
+                  var el=document.getElementById("signup-"+f); if(el) el.value="";
+                });
+                clearAllFieldErrors("signup-");
+              } else {
+                showMsg("signup-msg","error","Membership created but invoice failed: "+((inv&&inv.message)||"unknown")+". Please contact us.");
+              }
+            },
+            function(e){ document.getElementById("signup-btn").disabled=false; showMsg("signup-msg","error","Invoice error: "+e.message); }
+          );
+        } else {
+          document.getElementById("signup-btn").disabled = false;
+          showMsg("signup-msg","error",(r&&r.message)||"Sign up failed. Please try again.");
+        }
+      },
+      function(e){ document.getElementById("signup-btn").disabled=false; showMsg("signup-msg","error","Error: "+e.message); }
+    );
+  });
+}
+
+// ── DASHBOARD ─────────────────────────────────────────────────
 function initDashboard(members) {
   allMembers = members;
   document.getElementById("login-panel").classList.add("hidden");
   document.getElementById("dashboard-panel").classList.remove("hidden");
-
   var sel  = document.getElementById("record-selector");
   var tabs = document.getElementById("record-tabs");
   tabs.innerHTML = "";
@@ -453,184 +633,130 @@ function initDashboard(members) {
     sel.classList.remove("hidden");
     members.forEach(function(m, i) {
       var btn = document.createElement("button");
-      btn.className = "record-tab" + (i === 0 ? " active" : "");
-      btn.textContent = (m.firstName || "Member") + " " + (m.lastName || "");
-      btn.onclick = (function(idx){ return function(){ selectRecord(idx); }; })(i);
+      btn.className = "record-tab" + (i===0?" active":"");
+      btn.textContent = (m.firstName||"Member")+" "+(m.lastName||"");
+      btn.addEventListener("click", (function(idx){ return function(){ selectRecord(idx); }; })(i));
       tabs.appendChild(btn);
     });
-  } else {
-    sel.classList.add("hidden");
-  }
+  } else { sel.classList.add("hidden"); }
   selectRecord(0);
   loadEvents();
 }
 
 function selectRecord(idx) {
   activeMemberIdx = idx;
-  document.querySelectorAll(".record-tab").forEach(function(t, i){ t.classList.toggle("active", i === idx); });
-
-  // Clear per-member state that shouldn't carry over between records
-  clearMsg("membership-msg");
-  clearMsg("profile-msg");
-  document.getElementById("history-container").innerHTML =
-    '<p style="color:var(--gray-400);font-size:.9rem;">Loading payment history…</p>';
-
-  // Always return to Profile tab when switching members
+  document.querySelectorAll(".record-tab").forEach(function(t,i){ t.classList.toggle("active",i===idx); });
+  clearMsg("membership-msg"); clearMsg("profile-msg");
+  document.getElementById("history-container").innerHTML = '<p style="color:var(--gray-400);font-size:.9rem;">Loading payment history…</p>';
   document.querySelectorAll(".tab-panel").forEach(function(p){ p.classList.remove("active"); });
   document.querySelectorAll(".tab").forEach(function(t){ t.classList.remove("active"); });
   document.getElementById("tab-profile").classList.add("active");
-
+  document.getElementById("tab-btn-profile").classList.add("active");
   renderMemberCard(allMembers[idx]);
-
-  // If the history tab was already active, reload it for the new member
-  if (document.getElementById("tab-history").classList.contains("active")) {
-    loadHistory();
-  }
 }
 
 // ── RENDER MEMBER CARD ────────────────────────────────────────
 function renderMemberCard(m) {
-  document.getElementById("dash-avatar").textContent = (m.firstName || "?").charAt(0).toUpperCase();
-  document.getElementById("dash-name").textContent   = ((m.firstName||"") + " " + (m.lastName||"")).trim() || "—";
-
+  document.getElementById("dash-avatar").textContent = (m.firstName||"?").charAt(0).toUpperCase();
+  document.getElementById("dash-name").textContent   = ((m.firstName||"")+" "+(m.lastName||"")).trim()||"—";
   var joinDate = null;
-  if (m.joinDate) { var jd = new Date(m.joinDate); if (!isNaN(jd.getTime())) joinDate = jd; }
+  if (m.joinDate){ var jd=new Date(m.joinDate); if(!isNaN(jd.getTime())) joinDate=jd; }
   document.getElementById("dash-since").textContent = joinDate
-    ? "Member since " + joinDate.toLocaleDateString("default",{month:"long"}) + " " + joinDate.getFullYear()
-    : "Member";
-
-  // Display status: show Active if cancel is merely pending
-  var displayStatus = m._cancelPending ? "Active" : (m.status || "—");
-  var statusKey     = displayStatus.toLowerCase();
-  var badgeClass    = statusKey === "active"  ? "badge-active"
-                    : statusKey === "expired" ? "badge-expired"
-                    : statusKey === "pending" ? "badge-expired"  // amber — awaiting payment
-                    : "badge-cancelled";
-  document.getElementById("dash-badge").innerHTML = '<span class="badge ' + badgeClass + '">' + escHtml(displayStatus) + '</span>';
+    ? "Member since "+joinDate.toLocaleDateString("default",{month:"long"})+" "+joinDate.getFullYear() : "Member";
+  var displayStatus = m._cancelPending ? "Active" : (m.status||"—");
+  var sk = displayStatus.toLowerCase();
+  var bc = sk==="active"?"badge-active":sk==="expired"?"badge-expired":sk==="pending"?"badge-expired":"badge-cancelled";
+  document.getElementById("dash-badge").innerHTML = '<span class="badge '+bc+'">'+esc(displayStatus)+'</span>';
 
   // Profile grid
-  var pg = document.getElementById("profile-info-grid");
-  pg.innerHTML = "";
-  addInfo(pg, "First Name", m.firstName);
-  addInfo(pg, "Last Name",  m.lastName);
-  addInfo(pg, "Email",      m.email, true);
-  addInfo(pg, "Phone",      formatPhone(m.phone));
-  addInfo(pg, "Street",     m.street, true);
-  addInfo(pg, "City",       m.city);
-  addInfo(pg, "State",      m.state);
-  addInfo(pg, "ZIP",        m.zip);
-  addInfo(pg, "Birthday",   formatDate(m.birthday));
+  var pg = document.getElementById("profile-info-grid"); pg.innerHTML="";
+  addInfo(pg,"First Name",m.firstName); addInfo(pg,"Last Name",m.lastName);
+  addInfo(pg,"Email",m.email,true); addInfo(pg,"Phone",fmtPhone(m.phone));
+  addInfo(pg,"Street",m.street,true); addInfo(pg,"City",m.city);
+  addInfo(pg,"State",m.state); addInfo(pg,"ZIP",m.zip);
+  addInfo(pg,"Birthday",fmtDate(m.birthday));
 
   // Membership grid
-  var mg = document.getElementById("membership-info-grid");
-  mg.innerHTML = "";
-  addInfo(mg, "Status",       displayStatus);
-  addInfo(mg, "Mug Number",   m.mugNum || "Not assigned");
-  addInfo(mg, "Member Since", joinDate ? fmtMonthYear(joinDate) : "—");
-  addInfo(mg, "Expires",      formatDate(m.expireDate));
-  addInfo(mg, "Last Payment", formatDate(m.recentPay));
-  var apStatus = m.autopay ? "Active ✓" : m.autoPayReq ? "Requested — pending setup" : "Not enrolled";
-  addInfo(mg, "Autopay", apStatus);
+  var mg = document.getElementById("membership-info-grid"); mg.innerHTML="";
+  addInfo(mg,"Status",displayStatus); addInfo(mg,"Mug Number",m.mugNum||"Not assigned");
+  addInfo(mg,"Member Since",joinDate?fmtMonthYear(joinDate):"—");
+  addInfo(mg,"Expires",fmtDate(m.expireDate)); addInfo(mg,"Last Payment",fmtDate(m.recentPay));
+  var ap = m.autopay?"Active ✓":m.autoPayReq?"Requested — pending setup":"Not enrolled";
+  addInfo(mg,"Autopay",ap);
 
-  // Cancel-pending notice
+  // Cancel notice
   var notice = document.getElementById("cancel-notice");
   if (m._cancelPending && m.expireDate) {
-    notice.textContent = "⚠️ Cancellation pending — your membership remains active until " + formatDate(m.expireDate) + ".";
+    notice.textContent = "⚠️ Cancellation pending — your membership remains active until "+fmtDate(m.expireDate)+".";
     notice.classList.remove("hidden");
-  } else {
-    notice.classList.add("hidden");
-  }
+  } else { notice.classList.add("hidden"); }
 
   renderMembershipActions(m, displayStatus);
 }
 
 function renderMembershipActions(m, displayStatus) {
-  var el = document.getElementById("membership-actions");
-  el.innerHTML = "";
-  var s = (displayStatus || "").toLowerCase();
+  var el = document.getElementById("membership-actions"); el.innerHTML="";
+  var s  = (displayStatus||"").toLowerCase();
 
-  if (s === "active") {
+  if (s==="active") {
     if (m.autopay) {
-      var apBtn = addActionBtn(el, "Autopay Active ✓", "btn-success", function(){});
-      apBtn.disabled = true;
+      var ab = mkBtn("Autopay Active ✓","btn-success",null); ab.disabled=true; el.appendChild(ab);
     } else if (m.autoPayReq) {
-      var apBtn = addActionBtn(el, "⏳ Autopay Requested", "btn-secondary", function(){});
-      apBtn.disabled = true;
+      var ab = mkBtn("⏳ Autopay Requested","btn-secondary",null); ab.disabled=true; el.appendChild(ab);
     } else {
-      addActionBtn(el, "Request Autopay", "btn-success", function(){ confirmAction(
-        "Request Autopay Enrollment?",
-        "We'll notify the team and get you set up. You'll hear back shortly.",
-        callRequestAutopay
-      ); });
+      el.appendChild(mkBtn("Request Autopay","btn-success",function(){
+        confirmAction("Request Autopay Enrollment?","We'll notify the team and get you set up. You'll hear back shortly.",callRequestAutopay);
+      }));
     }
-    addActionBtn(el, "💳 Pay Now", "btn-secondary", showPaymentInfo);
-
-    // Only show Cancel button if not already pending cancellation
+    el.appendChild(mkBtn("💳 Pay Now","btn-secondary",showPaymentInfo));
     if (!m._cancelPending) {
-      addActionBtn(el, "Cancel Membership", "btn-danger", function(){ confirmAction(
-        "Cancel your membership?",
-        "Your membership stays active until " + (formatDate(m.expireDate) || "expiry") + ", then will not renew.",
-        callCancelMembership
-      ); });
+      el.appendChild(mkBtn("Cancel Membership","btn-danger",function(){
+        confirmAction("Cancel your membership?","Your membership stays active until "+(fmtDate(m.expireDate)||"expiry")+", then will not renew.",callCancelMembership);
+      }));
     }
   }
-
-  if (s === "expired" || s === "cancelled") {
-    addActionBtn(el, "Renew Membership", "btn-success", function(){ confirmAction(
-      "Renew your membership?",
-      "Your membership will be renewed for one year from today.",
-      callRenewMembership
-    ); });
-    addActionBtn(el, "💳 Pay Now", "btn-secondary", showPaymentInfo);
+  if (s==="expired"||s==="cancelled") {
+    el.appendChild(mkBtn("Renew Membership","btn-success",function(){
+      confirmAction("Renew your membership?","Your membership will be renewed for one year from today.",callRenewMembership);
+    }));
+    el.appendChild(mkBtn("💳 Pay Now","btn-secondary",showPaymentInfo));
   }
-
-  if (s === "pending") {
-    var pb = addActionBtn(el, "⏳ Awaiting Payment", "btn-secondary", function(){});
-    pb.disabled = true;
-    addActionBtn(el, "💳 Resend Invoice", "btn-primary", showPaymentInfo);
+  if (s==="pending") {
+    var pb=mkBtn("⏳ Awaiting Payment","btn-secondary",null); pb.disabled=true; el.appendChild(pb);
+    el.appendChild(mkBtn("💳 Resend Invoice","btn-primary",showPaymentInfo));
   }
 }
 
-// ── PROFILE EDIT ─────────────────────────────────────────────
+// ── PROFILE EDIT ──────────────────────────────────────────────
 function startEditProfile() {
   var m = allMembers[activeMemberIdx];
-  document.getElementById("edit-firstName").value = m.firstName || "";
-  document.getElementById("edit-lastName").value  = m.lastName  || "";
-  document.getElementById("edit-phone").value     = m.phone     || "";
-  document.getElementById("edit-street").value    = m.street    || "";
-  document.getElementById("edit-city").value      = m.city      || "";
-  document.getElementById("edit-state").value     = m.state     || "";
-  document.getElementById("edit-zip").value       = m.zip       || "";
-  if (m.birthday) {
-    var bd = new Date(m.birthday);
-    document.getElementById("edit-birthday").value = bd.toISOString().split("T")[0];
-  }
+  document.getElementById("edit-firstName").value = m.firstName||"";
+  document.getElementById("edit-lastName").value  = m.lastName||"";
+  document.getElementById("edit-phone").value     = m.phone||"";
+  document.getElementById("edit-street").value    = m.street||"";
+  document.getElementById("edit-city").value      = m.city||"";
+  document.getElementById("edit-state").value     = m.state||"";
+  document.getElementById("edit-zip").value       = m.zip||"";
+  var bd=safeDate(m.birthday); if(bd) document.getElementById("edit-birthday").value=bd.toISOString().split("T")[0];
   swap("profile-view","profile-edit");
 }
-function cancelEditProfile() { swap("profile-edit","profile-view"); clearMsg("profile-msg"); }
+function cancelEditProfile(){ swap("profile-edit","profile-view"); clearMsg("profile-msg"); }
 function saveProfile() {
   validateFormFields("edit-", function(addrOverrides) {
     var updates = {
       firstName: document.getElementById("edit-firstName").value.trim(),
       lastName:  document.getElementById("edit-lastName").value.trim(),
       phone:     document.getElementById("edit-phone").value.trim(),
-      street:    addrOverrides.street !== undefined ? addrOverrides.street : document.getElementById("edit-street").value.trim(),
-      city:      addrOverrides.city   !== undefined ? addrOverrides.city   : document.getElementById("edit-city").value.trim(),
-      state:     addrOverrides.state  !== undefined ? addrOverrides.state  : document.getElementById("edit-state").value.trim().toUpperCase(),
-      zip:       addrOverrides.zip    !== undefined ? addrOverrides.zip    : document.getElementById("edit-zip").value.trim(),
+      street:    addrOverrides.street!==undefined?addrOverrides.street:document.getElementById("edit-street").value.trim(),
+      city:      addrOverrides.city!==undefined?addrOverrides.city:document.getElementById("edit-city").value.trim(),
+      state:     addrOverrides.state!==undefined?addrOverrides.state:document.getElementById("edit-state").value.trim().toUpperCase(),
+      zip:       addrOverrides.zip!==undefined?addrOverrides.zip:document.getElementById("edit-zip").value.trim(),
       birthday:  document.getElementById("edit-birthday").value
     };
     showMsg("profile-msg","info","Saving…");
-    callServer("updateMemberInfo", { email: currentEmail, rowIndex: allMembers[activeMemberIdx]._rowIndex, updates: updates },
-      function(r) {
-        if (r && r.success) {
-          allMembers=r.members;
-          renderMemberCard(allMembers[activeMemberIdx]);
-          clearAllFieldErrors("edit-");
-          swap("profile-edit","profile-view");
-          clearMsg("profile-msg");
-        } else { showMsg("profile-msg","error",(r&&r.message)||"Save failed."); }
-      },
+    callServer("updateMemberInfo",{email:currentEmail,rowIndex:allMembers[activeMemberIdx]._rowIndex,updates:updates},
+      function(r){ if(r&&r.success){allMembers=r.members;renderMemberCard(allMembers[activeMemberIdx]);clearAllFieldErrors("edit-");swap("profile-edit","profile-view");clearMsg("profile-msg");}
+        else{showMsg("profile-msg","error",(r&&r.message)||"Save failed.");}},
       function(e){ showMsg("profile-msg","error","Error: "+e.message); }
     );
   });
@@ -638,51 +764,45 @@ function saveProfile() {
 
 // ── MEMBERSHIP ACTIONS ────────────────────────────────────────
 function callCancelMembership() {
-  callServer("cancelMembership", { email: currentEmail, rowIndex: allMembers[activeMemberIdx]._rowIndex },
-    function(r){ if(r&&r.success){ allMembers=r.members; renderMemberCard(allMembers[activeMemberIdx]); showMsg("membership-msg","success","Cancellation confirmed. Your membership stays active until expiry."); } },
-    function(e){ showMsg("membership-msg","error","Error: "+e.message); }
+  callServer("cancelMembership",{email:currentEmail,rowIndex:allMembers[activeMemberIdx]._rowIndex},
+    function(r){if(r&&r.success){allMembers=r.members;renderMemberCard(allMembers[activeMemberIdx]);showMsg("membership-msg","success","Cancellation confirmed. Your membership stays active until expiry.");}},
+    function(e){showMsg("membership-msg","error","Error: "+e.message);}
   );
 }
 function callRenewMembership() {
-  callServer("renewMembership", { email: currentEmail, rowIndex: allMembers[activeMemberIdx]._rowIndex },
-    function(r){ if(r&&r.success){ allMembers=r.members; renderMemberCard(allMembers[activeMemberIdx]); showMsg("membership-msg","success","Membership renewed for one year!"); } },
-    function(e){ showMsg("membership-msg","error","Error: "+e.message); }
+  callServer("renewMembership",{email:currentEmail,rowIndex:allMembers[activeMemberIdx]._rowIndex},
+    function(r){if(r&&r.success){allMembers=r.members;renderMemberCard(allMembers[activeMemberIdx]);showMsg("membership-msg","success","Membership renewed for one year!");}},
+    function(e){showMsg("membership-msg","error","Error: "+e.message);}
   );
 }
 function callRequestAutopay() {
-  callServer("requestAutopay", { email: currentEmail, rowIndex: allMembers[activeMemberIdx]._rowIndex },
-    function(r){ if(r&&r.success){ allMembers=r.members; renderMemberCard(allMembers[activeMemberIdx]); showMsg("membership-msg","success","Autopay request sent! We'll be in touch shortly to complete enrollment."); } },
-    function(e){ showMsg("membership-msg","error","Error: "+e.message); }
+  callServer("requestAutopay",{email:currentEmail,rowIndex:allMembers[activeMemberIdx]._rowIndex},
+    function(r){if(r&&r.success){allMembers=r.members;renderMemberCard(allMembers[activeMemberIdx]);showMsg("membership-msg","success","Autopay request sent! We'll be in touch shortly.");}},
+    function(e){showMsg("membership-msg","error","Error: "+e.message);}
   );
 }
 function showPaymentInfo() {
   var m = allMembers[activeMemberIdx];
-  showMsg("membership-msg", "info", "Creating your invoice, please wait…");
-  document.querySelectorAll("#membership-actions .btn").forEach(function(b){ b.disabled = true; });
-  callServer("createMembershipInvoice", { email: currentEmail, rowIndex: m._rowIndex },
-    function(r) {
-      document.querySelectorAll("#membership-actions .btn").forEach(function(b){ b.disabled = false; });
-      if (r && r.success) {
-        showMsg("membership-msg", "success",
-          (r.isResend
-            ? "We found your existing invoice #" + r.invoiceNum + " and resent it to your email."
-            : "Invoice #" + r.invoiceNum + " sent to your email!") +
-          " Click the Pay Now button in that email to complete your payment. Your membership will activate automatically once payment is received.");
-      } else {
-        showMsg("membership-msg", "error", "Could not create invoice: " + ((r && r.message) || "unknown error"));
-      }
+  showMsg("membership-msg","info","Creating your invoice, please wait…");
+  document.querySelectorAll("#membership-actions .btn").forEach(function(b){b.disabled=true;});
+  callServer("createMembershipInvoice",{email:currentEmail,rowIndex:m._rowIndex},
+    function(r){
+      document.querySelectorAll("#membership-actions .btn").forEach(function(b){b.disabled=false;});
+      if(r&&r.success){
+        showMsg("membership-msg","success",(r.isResend?"We found your existing invoice #"+r.invoiceNum+" and resent it to your email.":"Invoice #"+r.invoiceNum+" sent to your email!")+" Click Pay Now in that email to complete payment. Your membership will update automatically once paid.");
+      } else { showMsg("membership-msg","error","Could not create invoice: "+((r&&r.message)||"unknown error")); }
     },
-    function(e) {
-      document.querySelectorAll("#membership-actions .btn").forEach(function(b){ b.disabled = false; });
-      showMsg("membership-msg", "error", "Error: " + e.message);
+    function(e){
+      document.querySelectorAll("#membership-actions .btn").forEach(function(b){b.disabled=false;});
+      showMsg("membership-msg","error","Error: "+e.message);
     }
   );
 }
 
 // ── ADD MEMBERSHIP ────────────────────────────────────────────
 function showAddMemberForm() {
-  document.getElementById("add-member-card").style.display = "block";
-  document.getElementById("add-member-card").scrollIntoView({ behavior:"smooth" });
+  document.getElementById("add-member-card").style.display="block";
+  document.getElementById("add-member-card").scrollIntoView({behavior:"smooth"});
 }
 function submitAddMember() {
   validateFormFields("new-", function(addrOverrides) {
@@ -690,177 +810,142 @@ function submitAddMember() {
       firstName: document.getElementById("new-firstName").value.trim(),
       lastName:  document.getElementById("new-lastName").value.trim(),
       phone:     document.getElementById("new-phone").value.trim(),
-      street:    addrOverrides.street !== undefined ? addrOverrides.street : document.getElementById("new-street").value.trim(),
-      city:      addrOverrides.city   !== undefined ? addrOverrides.city   : document.getElementById("new-city").value.trim(),
-      state:     addrOverrides.state  !== undefined ? addrOverrides.state  : document.getElementById("new-state").value.trim().toUpperCase(),
-      zip:       addrOverrides.zip    !== undefined ? addrOverrides.zip    : document.getElementById("new-zip").value.trim(),
+      street:    addrOverrides.street!==undefined?addrOverrides.street:document.getElementById("new-street").value.trim(),
+      city:      addrOverrides.city!==undefined?addrOverrides.city:document.getElementById("new-city").value.trim(),
+      state:     addrOverrides.state!==undefined?addrOverrides.state:document.getElementById("new-state").value.trim().toUpperCase(),
+      zip:       addrOverrides.zip!==undefined?addrOverrides.zip:document.getElementById("new-zip").value.trim(),
       birthday:  document.getElementById("new-birthday").value
     };
+    if(!data.firstName||!data.lastName){showMsg("add-member-msg","error","First and last name are required.");return;}
     showMsg("add-member-msg","info","Validating…");
-    callServer("addMembership", { email: currentEmail, newMemberData: data },
-      function(r) {
-        if (r && r.success) {
-          var newRowIndex = r.newRowIndex;
-          showMsg("add-member-msg", "info", "Creating invoice…");
-          callServer("createMembershipInvoice", { email: currentEmail, rowIndex: newRowIndex },
-            function(inv) {
-              if (inv && inv.success) {
-                showMsg("add-member-msg", "success",
-                  "Membership created! Invoice #" + inv.invoiceNum + " sent to your email. " +
-                  "The membership will activate automatically once payment is received.");
-                setTimeout(function() {
-                  allMembers = r.members;
-                  initDashboard(allMembers);
-                  document.getElementById("add-member-card").style.display = "none";
-                }, 2000);
-              } else {
-                showMsg("add-member-msg", "error", "Membership created but invoice failed: " + ((inv && inv.message) || "unknown error"));
-              }
+    callServer("addMembership",{email:currentEmail,newMemberData:data},
+      function(r){
+        if(r&&r.success){
+          callServer("createMembershipInvoice",{email:currentEmail,rowIndex:r.newRowIndex},
+            function(inv){
+              if(inv&&inv.success){
+                showMsg("add-member-msg","success","Membership created! Invoice #"+inv.invoiceNum+" sent to your email. The membership will activate once payment is received.");
+                setTimeout(function(){allMembers=r.members;initDashboard(allMembers);document.getElementById("add-member-card").style.display="none";},2000);
+              } else {showMsg("add-member-msg","error","Membership created but invoice failed: "+((inv&&inv.message)||"unknown")+". Please contact us.");}
             },
-            function(e){ showMsg("add-member-msg","error","Invoice error: "+e.message); }
+            function(e){showMsg("add-member-msg","error","Invoice error: "+e.message);}
           );
-        } else { showMsg("add-member-msg","error",(r&&r.message)||"Error adding membership."); }
+        } else {showMsg("add-member-msg","error",(r&&r.message)||"Error adding membership.");}
       },
-      function(e){ showMsg("add-member-msg","error","Error: "+e.message); }
+      function(e){showMsg("add-member-msg","error","Error: "+e.message);}
     );
-  }); // end validateFormFields
+  });
 }
 
-// ── PAYMENT HISTORY ──────────────────────────────────────────
+// ── HISTORY ───────────────────────────────────────────────────
 function loadHistory() {
-  var m = allMembers[activeMemberIdx];
   var container = document.getElementById("history-container");
   container.innerHTML = '<p style="color:var(--gray-400);font-size:.9rem;">Loading…</p>';
-
-  callServer("getInvoiceHistory", { email: currentEmail, rowIndex: allMembers[activeMemberIdx]._rowIndex },
+  callServer("getInvoiceHistory",{email:currentEmail,rowIndex:allMembers[activeMemberIdx]._rowIndex},
     function(r) {
-      if (!r || !r.success || !r.history.length) {
-        container.innerHTML = '<p style="color:var(--gray-400);font-size:.9rem;">No invoice history found.</p>';
-        return;
+      if(!r||!r.success||!r.history.length){
+        container.innerHTML='<p style="color:var(--gray-400);font-size:.9rem;">No invoice history found.</p>'; return;
       }
-      container.innerHTML = "";
-
-      // Header row
-      // Render as cards on mobile, table on wider screens
+      container.innerHTML="";
       var isMobile = window.innerWidth < 480;
-
       if (!isMobile) {
         var table = document.createElement("table");
-        table.style.cssText = "width:100%;border-collapse:collapse;font-size:.88rem;";
-        table.innerHTML =
-          "<thead><tr>" +
-          "<th style='text-align:left;padding:6px 8px;color:var(--gray-400);font-size:.72rem;text-transform:uppercase;letter-spacing:.4px;border-bottom:2px solid var(--gray-200);'>Invoice</th>" +
-          "<th style='text-align:left;padding:6px 8px;color:var(--gray-400);font-size:.72rem;text-transform:uppercase;letter-spacing:.4px;border-bottom:2px solid var(--gray-200);'>Date</th>" +
-          "<th style='text-align:right;padding:6px 8px;color:var(--gray-400);font-size:.72rem;text-transform:uppercase;letter-spacing:.4px;border-bottom:2px solid var(--gray-200);'>Amount</th>" +
-          "<th style='text-align:center;padding:6px 8px;color:var(--gray-400);font-size:.72rem;text-transform:uppercase;letter-spacing:.4px;border-bottom:2px solid var(--gray-200);'>Status</th>" +
+        table.style.cssText="width:100%;border-collapse:collapse;font-size:.88rem;";
+        table.innerHTML="<thead><tr>"+
+          "<th style='text-align:left;padding:6px 8px;color:var(--gray-400);font-size:.72rem;text-transform:uppercase;letter-spacing:.4px;border-bottom:2px solid var(--gray-200);'>Invoice</th>"+
+          "<th style='text-align:left;padding:6px 8px;color:var(--gray-400);font-size:.72rem;text-transform:uppercase;letter-spacing:.4px;border-bottom:2px solid var(--gray-200);'>Date</th>"+
+          "<th style='text-align:right;padding:6px 8px;color:var(--gray-400);font-size:.72rem;text-transform:uppercase;letter-spacing:.4px;border-bottom:2px solid var(--gray-200);'>Amount</th>"+
+          "<th style='text-align:center;padding:6px 8px;color:var(--gray-400);font-size:.72rem;text-transform:uppercase;letter-spacing:.4px;border-bottom:2px solid var(--gray-200);'>Status</th>"+
           "</tr></thead><tbody></tbody>";
-        var tbody = table.querySelector("tbody");
-
-        r.history.forEach(function(inv) {
-          var isPaid = inv.status === "Paid";
-          var tr = document.createElement("tr");
-          tr.innerHTML =
-            "<td style='padding:8px;border-bottom:1px solid var(--gray-100);color:var(--gray-800);'>#" + escHtml(String(inv.invoiceNum)) + "</td>" +
-            "<td style='padding:8px;border-bottom:1px solid var(--gray-100);color:var(--gray-600);'>" + escHtml(String(inv.date)) + "</td>" +
-            "<td style='padding:8px;border-bottom:1px solid var(--gray-100);color:var(--gray-800);text-align:right;'>$" + parseFloat(inv.amount).toFixed(2) + "</td>" +
-            "<td style='padding:8px;border-bottom:1px solid var(--gray-100);text-align:center;'>" +
-            "<span class='badge " + (isPaid ? "badge-active" : "badge-expired") + "'>" + escHtml(inv.status) + "</span></td>";
+        var tbody=table.querySelector("tbody");
+        r.history.forEach(function(inv){
+          var isPaid=inv.status==="Paid";
+          var tr=document.createElement("tr");
+          tr.innerHTML="<td style='padding:8px;border-bottom:1px solid var(--gray-100);color:var(--gray-800);'>#"+esc(String(inv.invoiceNum))+"</td>"+
+            "<td style='padding:8px;border-bottom:1px solid var(--gray-100);color:var(--gray-600);'>"+esc(String(inv.date))+"</td>"+
+            "<td style='padding:8px;border-bottom:1px solid var(--gray-100);color:var(--gray-800);text-align:right;'>$"+parseFloat(inv.amount).toFixed(2)+"</td>"+
+            "<td style='padding:8px;border-bottom:1px solid var(--gray-100);text-align:center;'><span class='badge "+(isPaid?"badge-active":"badge-expired")+"'>"+esc(inv.status)+"</span></td>";
           tbody.appendChild(tr);
         });
-
         container.appendChild(table);
       } else {
-        // Mobile: one card per invoice
-        r.history.forEach(function(inv) {
-          var isPaid = inv.status === "Paid";
-          var card = document.createElement("div");
-          card.style.cssText = "background:var(--gray-50);border-radius:8px;padding:12px 14px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center;";
-          card.innerHTML =
-            "<div>" +
-            "<div style='font-size:.78rem;color:var(--gray-400);text-transform:uppercase;letter-spacing:.4px;'>Invoice #" + escHtml(String(inv.invoiceNum)) + "</div>" +
-            "<div style='font-size:.95rem;color:var(--gray-800);font-weight:600;margin-top:2px;'>$" + parseFloat(inv.amount).toFixed(2) + "</div>" +
-            "<div style='font-size:.82rem;color:var(--gray-600);margin-top:2px;'>" + escHtml(String(inv.date)) + "</div>" +
-            "</div>" +
-            "<span class='badge " + (isPaid ? "badge-active" : "badge-expired") + "'>" + escHtml(inv.status) + "</span>";
+        r.history.forEach(function(inv){
+          var isPaid=inv.status==="Paid";
+          var card=document.createElement("div");
+          card.style.cssText="background:var(--gray-50);border-radius:8px;padding:12px 14px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center;";
+          card.innerHTML="<div>"+
+            "<div style='font-size:.78rem;color:var(--gray-400);text-transform:uppercase;letter-spacing:.4px;'>Invoice #"+esc(String(inv.invoiceNum))+"</div>"+
+            "<div style='font-size:.95rem;color:var(--gray-800);font-weight:600;margin-top:2px;'>$"+parseFloat(inv.amount).toFixed(2)+"</div>"+
+            "<div style='font-size:.82rem;color:var(--gray-600);margin-top:2px;'>"+esc(String(inv.date))+"</div>"+
+            "</div><span class='badge "+(isPaid?"badge-active":"badge-expired")+"'>"+esc(inv.status)+"</span>";
           container.appendChild(card);
         });
       }
     },
-    function(e) {
-      document.getElementById("history-container").innerHTML =
-        '<p style="color:var(--gray-400);font-size:.9rem;">Could not load history.</p>';
-    }
+    function(){ container.innerHTML='<p style="color:var(--gray-400);font-size:.9rem;">Could not load history.</p>'; }
   );
 }
 
-// ── EVENTS ───────────────────────────────────────────────────
+// ── EVENTS ────────────────────────────────────────────────────
 function loadEvents() {
-  callServer("getUpcomingEvents", {},
+  callServer("getUpcomingEvents",{},
     function(r) {
-      var container = document.getElementById("events-container");
-      if (!r.success || r.events.length === 0) {
-        container.innerHTML = '<p style="color:var(--gray-400);font-size:.9rem;">No upcoming events found.</p>';
-        return;
-      }
-      container.innerHTML = "";
-      r.events.forEach(function(ev) {
-        var d = new Date(ev.start);
-        var item = document.createElement("div");
-        item.className = "event-item";
-
-        // Build Google Calendar "Add to Calendar" link
-        var gcalStart = d.toISOString().replace(/[-:]/g,"").replace(".000","");
-        var gcalEnd   = new Date(ev.end).toISOString().replace(/[-:]/g,"").replace(".000","");
-        var gcalUrl   = "https://calendar.google.com/calendar/render?action=TEMPLATE" +
-          "&text=" + encodeURIComponent(ev.title) +
-          "&dates=" + gcalStart + "/" + gcalEnd +
-          (ev.location    ? "&location="   + encodeURIComponent(ev.location)    : "") +
-          (ev.description ? "&details="    + encodeURIComponent(ev.description) : "");
-
-        item.innerHTML =
-          '<div class="event-title">' + escHtml(ev.title) + '</div>' +
-          '<div class="event-date">'  + d.toLocaleDateString("en-US",{weekday:"short",month:"short",day:"numeric",year:"numeric",hour:"numeric",minute:"2-digit"}) + '</div>' +
-          (ev.location    ? '<div class="event-loc">📍 '  + escHtml(ev.location)    + '</div>' : '') +
-          (ev.description ? '<div class="event-desc">'    + escHtml(ev.description) + '</div>' : '') +
-          '<a class="add-cal-link" href="' + gcalUrl + '" target="_blank" rel="noopener noreferrer">📅 Add to Google Calendar</a>';
-        container.appendChild(item);
+      var c=document.getElementById("events-container");
+      if(!r||!r.success||!r.events.length){c.innerHTML='<p style="color:var(--gray-400);font-size:.9rem;">No upcoming events found.</p>';return;}
+      c.innerHTML="";
+      r.events.forEach(function(ev){
+        var d=new Date(ev.start);
+        var gcalStart=d.toISOString().replace(/[-:]/g,"").replace(".000","");
+        var gcalEnd=new Date(ev.end).toISOString().replace(/[-:]/g,"").replace(".000","");
+        var gcalUrl="https://calendar.google.com/calendar/render?action=TEMPLATE"+
+          "&text="+encodeURIComponent(ev.title)+"&dates="+gcalStart+"/"+gcalEnd+
+          (ev.location?"&location="+encodeURIComponent(ev.location):"")+
+          (ev.description?"&details="+encodeURIComponent(ev.description):"");
+        var item=document.createElement("div"); item.className="event-item";
+        item.innerHTML='<div class="event-title">'+esc(ev.title)+'</div>'+
+          '<div class="event-date">'+d.toLocaleDateString("en-US",{weekday:"short",month:"short",day:"numeric",year:"numeric",hour:"numeric",minute:"2-digit"})+'</div>'+
+          (ev.location?'<div class="event-loc">📍 '+esc(ev.location)+'</div>':'')+
+          (ev.description?'<div class="event-desc">'+esc(ev.description)+'</div>':'')+
+          '<a class="add-cal-link" href="'+gcalUrl+'" target="_blank" rel="noopener noreferrer">📅 Add to Google Calendar</a>';
+        c.appendChild(item);
       });
     },
-    function() {
-      document.getElementById("events-container").innerHTML = '<p style="color:var(--gray-400);font-size:.9rem;">Could not load events.</p>';
-    }
+    function(){ document.getElementById("events-container").innerHTML='<p style="color:var(--gray-400);font-size:.9rem;">Could not load events.</p>'; }
   );
 }
 
-// ── TABS ─────────────────────────────────────────────────────
+// ── TABS ──────────────────────────────────────────────────────
 function switchTab(name, btn) {
-  document.querySelectorAll(".tab-panel").forEach(function(p){ p.classList.remove("active"); });
-  document.querySelectorAll(".tab").forEach(function(t){ t.classList.remove("active"); });
+  document.querySelectorAll(".tab-panel").forEach(function(p){p.classList.remove("active");});
+  document.querySelectorAll(".tab").forEach(function(t){t.classList.remove("active");});
   document.getElementById("tab-"+name).classList.add("active");
   btn.classList.add("active");
-  if (name === "history") loadHistory();
+  if (name==="history") loadHistory();
 }
 
-// ── MODAL ────────────────────────────────────────────────────
+// ── MODAL ─────────────────────────────────────────────────────
 function confirmAction(title, body, onConfirm) {
   document.getElementById("modal-title").textContent = title;
   document.getElementById("modal-body").textContent  = body;
-  document.getElementById("modal-confirm").onclick   = function(){ closeModal(); onConfirm(); };
+  var cb = document.getElementById("modal-confirm");
+  var fresh = cb.cloneNode(true); cb.parentNode.replaceChild(fresh, cb);
+  fresh.addEventListener("click", function(){ closeModal(); onConfirm(); });
   document.getElementById("modal").classList.remove("hidden");
 }
-function closeModal() { document.getElementById("modal").classList.add("hidden"); }
+function closeModal(){ document.getElementById("modal").classList.add("hidden"); }
 
-// ── LOGOUT ───────────────────────────────────────────────────
+// ── LOGOUT ────────────────────────────────────────────────────
 function logout() {
-  currentEmail = ""; allMembers = []; activeMemberIdx = 0;
+  currentEmail=""; allMembers=[]; activeMemberIdx=0; verifyInFlight=false;
   document.getElementById("dashboard-panel").classList.add("hidden");
   document.getElementById("login-panel").classList.remove("hidden");
-  document.getElementById("email-input").value = "";
-  document.getElementById("code-input").value  = "";
+  document.getElementById("email-input").value="";
+  document.getElementById("code-input").value="";
+  showLoginFlow();
   swap("step-code","step-email");
 }
 
-// ── VALIDATION ───────────────────────────────────────────────
+// ── VALIDATION ────────────────────────────────────────────────
 var VALID_STATES = ["AL","AK","AZ","AR","CA","CO","CT","DE","FL","GA","HI","ID",
   "IL","IN","IA","KS","KY","LA","ME","MD","MA","MI","MN","MS","MO","MT","NE","NV",
   "NH","NJ","NM","NY","NC","ND","OH","OK","OR","PA","RI","SC","SD","TN","TX","UT",
@@ -874,13 +959,12 @@ var VALIDATORS = {
     return null;
   },
   phone: function(v) {
-    if (!v.trim()) return null; // optional
-    var digits = v.replace(/\D/g,"");
-    if (digits.length !== 10) return "Please enter a 10-digit US phone number.";
+    if (!v.trim()) return null;
+    if (v.replace(/\D/g,"").length !== 10) return "Please enter a 10-digit US phone number.";
     return null;
   },
   state: function(v) {
-    if (!v.trim()) return null; // optional standalone — required at address level
+    if (!v.trim()) return null;
     if (VALID_STATES.indexOf(v.trim().toUpperCase()) === -1) return "Please enter a valid 2-letter US state code.";
     return null;
   },
@@ -890,242 +974,102 @@ var VALIDATORS = {
     return null;
   },
   birthday: function(v) {
-    if (!v) return null; // optional
-    var d = new Date(v);
-    if (isNaN(d.getTime())) return "Please enter a valid date.";
-    var now = new Date();
-    if (d > now) return "Birthday cannot be in the future.";
-    if (now.getFullYear() - d.getFullYear() > 120) return "Please enter a valid birthday.";
+    if (!v) return null;
+    var d=new Date(v); if(isNaN(d.getTime())) return "Please enter a valid date.";
+    var now=new Date(); if(d>now) return "Birthday cannot be in the future.";
+    if(now.getFullYear()-d.getFullYear()>120) return "Please enter a valid birthday.";
     return null;
   }
 };
 
 function validateField(input, type) {
-  var fn  = VALIDATORS[type];
-  var err = fn ? fn(input.value) : null;
-  var errEl = document.getElementById("err-" + input.id);
-  if (err) {
-    input.classList.add("invalid");
-    input.classList.remove("valid");
-    if (errEl) errEl.textContent = err;
-    return false;
-  } else if (input.value.trim()) {
-    input.classList.remove("invalid");
-    input.classList.add("valid");
-    if (errEl) errEl.textContent = "";
-  }
+  var fn=VALIDATORS[type]; var err=fn?fn(input.value):null;
+  var errEl=document.getElementById("err-"+input.id);
+  if (err) { input.classList.add("invalid"); input.classList.remove("valid"); if(errEl) errEl.textContent=err; return false; }
+  else if (input.value.trim()) { input.classList.remove("invalid"); input.classList.add("valid"); if(errEl) errEl.textContent=""; }
   return true;
 }
-
 function clearFieldError(input) {
   input.classList.remove("invalid");
-  var errEl = document.getElementById("err-" + input.id);
-  if (errEl) errEl.textContent = "";
+  var errEl=document.getElementById("err-"+input.id); if(errEl) errEl.textContent="";
 }
-
 function setFieldError(inputId, msg) {
-  var input = document.getElementById(inputId);
-  var errEl = document.getElementById("err-" + inputId);
-  if (input) { input.classList.add("invalid"); input.classList.remove("valid"); }
-  if (errEl) errEl.textContent = msg;
+  var input=document.getElementById(inputId); var errEl=document.getElementById("err-"+inputId);
+  if(input){input.classList.add("invalid");input.classList.remove("valid");}
+  if(errEl) errEl.textContent=msg;
 }
-
 function clearAllFieldErrors(prefix) {
-  var ids = ["firstName","lastName","phone","street","city","state","zip","birthday"];
-  ids.forEach(function(id) {
-    var input = document.getElementById(prefix + id);
-    var errEl = document.getElementById("err-" + prefix + id);
-    if (input) { input.classList.remove("invalid","valid"); }
-    if (errEl) errEl.textContent = "";
+  ["firstName","lastName","phone","street","city","state","zip","birthday","email"].forEach(function(id){
+    var input=document.getElementById(prefix+id); var errEl=document.getElementById("err-"+prefix+id);
+    if(input){input.classList.remove("invalid","valid");} if(errEl) errEl.textContent="";
   });
 }
-
-// Validate all fields in a form before submit.
-// Returns true only if all required fields pass AND address is verified.
-// prefix = "edit-" or "new-"
 function validateFormFields(prefix, onValid) {
-  var ok = true;
-
-  // Required name fields
-  if (!validateField(document.getElementById(prefix+"firstName"), "name")) ok = false;
-  if (!validateField(document.getElementById(prefix+"lastName"),  "name")) ok = false;
-
-  // Optional but format-checked
-  validateField(document.getElementById(prefix+"phone"),    "phone");
-  validateField(document.getElementById(prefix+"state"),    "state");
-  validateField(document.getElementById(prefix+"zip"),      "zip");
-  validateField(document.getElementById(prefix+"birthday"), "birthday");
-
-  // Check if any optional fields failed
-  ["phone","state","zip","birthday"].forEach(function(f) {
-    var el = document.getElementById(prefix+f);
-    if (el && el.classList.contains("invalid")) ok = false;
+  var ok=true;
+  if(!validateField(document.getElementById(prefix+"firstName"),"name")) ok=false;
+  if(!validateField(document.getElementById(prefix+"lastName"),"name"))  ok=false;
+  ["phone","state","zip","birthday"].forEach(function(f){
+    var el=document.getElementById(prefix+f);
+    if(el&&!validateField(el,f==="phone"?"phone":f==="state"?"state":f==="zip"?"zip":"birthday")) ok=false;
   });
+  if(!ok) return;
 
-  if (!ok) return;
+  var street=(document.getElementById(prefix+"street")||{}).value||"";
+  var city  =(document.getElementById(prefix+"city")||{}).value||"";
+  var state =(document.getElementById(prefix+"state")||{}).value||"";
+  var zip   =(document.getElementById(prefix+"zip")||{}).value||"";
+  var hasAddress = street.trim()||city.trim()||state.trim()||zip.trim();
 
-  // Address validation — only if any address field is filled
-  var street = (document.getElementById(prefix+"street").value || "").trim();
-  var city   = (document.getElementById(prefix+"city").value   || "").trim();
-  var state  = (document.getElementById(prefix+"state").value  || "").trim();
-  var zip    = (document.getElementById(prefix+"zip").value    || "").trim();
+  if (!hasAddress) { onValid({}); return; }
 
-  var hasAddress = street || city || state || zip;
+  var addrOk=true;
+  if(!street.trim()){setFieldError(prefix+"street","Street is required for address validation.");addrOk=false;}
+  if(!city.trim())  {setFieldError(prefix+"city",  "City is required for address validation.");  addrOk=false;}
+  if(!state.trim()) {setFieldError(prefix+"state", "State is required for address validation."); addrOk=false;}
+  if(!zip.trim())   {setFieldError(prefix+"zip",   "ZIP is required for address validation.");   addrOk=false;}
+  if(!addrOk) return;
 
-  if (!hasAddress) {
-    // No address entered — skip USPS check
-    onValid({});
-    return;
-  }
-
-  // All address parts required if any are present
-  var addrOk = true;
-  if (!street) { setFieldError(prefix+"street", "Street is required for address validation."); addrOk = false; }
-  if (!city)   { setFieldError(prefix+"city",   "City is required for address validation.");   addrOk = false; }
-  if (!state)  { setFieldError(prefix+"state",  "State is required for address validation.");  addrOk = false; }
-  if (!zip)    { setFieldError(prefix+"zip",    "ZIP is required for address validation.");    addrOk = false; }
-  if (!addrOk) return;
-
-  // Call USPS via server
-  var msgId = prefix === "edit-" ? "profile-msg" : "add-member-msg";
-  showMsg(msgId, "info", "Validating address with USPS…");
-
-  callServer("getInvoiceHistory", { email: currentEmail, rowIndex: allMembers[activeMemberIdx]._rowIndex },
+  var msgId = prefix==="edit-"?"profile-msg":prefix==="signup-"?"signup-msg":"add-member-msg";
+  showMsg(msgId,"info","Validating address with USPS…");
+  callServer("validateAddress",{street:street.trim(),city:city.trim(),state:state.trim(),zip:zip.trim()},
     function(r) {
       clearMsg(msgId);
-      if (!r.success) {
-        setFieldError(prefix+"street", r.message || "Address not found. Please check and try again.");
-        return;
-      }
-      // Auto-fill standardized address from USPS
-      var s = r.standardized;
-      document.getElementById(prefix+"street").value = s.street;
-      document.getElementById(prefix+"city").value   = s.city;
-      document.getElementById(prefix+"state").value  = s.state;
-      document.getElementById(prefix+"zip").value    = s.zip;
-      ["street","city","state","zip"].forEach(function(f) {
-        var el = document.getElementById(prefix+f);
-        if (el) { el.classList.remove("invalid"); el.classList.add("valid"); }
-        var errEl = document.getElementById("err-"+prefix+f);
-        if (errEl) errEl.textContent = "";
+      if(!r.success){setFieldError(prefix+"street",r.message||"Address not found. Please check and try again.");return;}
+      var s=r.standardized;
+      document.getElementById(prefix+"street").value=s.street;
+      document.getElementById(prefix+"city").value=s.city;
+      document.getElementById(prefix+"state").value=s.state;
+      document.getElementById(prefix+"zip").value=s.zip;
+      ["street","city","state","zip"].forEach(function(f){
+        var el=document.getElementById(prefix+f); if(el){el.classList.remove("invalid");el.classList.add("valid");}
+        var errEl=document.getElementById("err-"+prefix+f); if(errEl) errEl.textContent="";
       });
-      onValid({ street: s.street, city: s.city, state: s.state, zip: s.zip });
+      onValid({street:s.street,city:s.city,state:s.state,zip:s.zip});
     },
-    function(e) {
-      clearMsg(msgId);
-      showMsg(msgId, "error", "Address validation failed: " + e.message);
-    }
+    function(e){ clearMsg(msgId); showMsg(msgId,"error","Address validation failed: "+e.message); }
   );
 }
 
-// ── UTILITY ──────────────────────────────────────────────────
-function addInfo(grid, label, value, full) {
-  if (value === null || value === undefined || value === "" || value !== value) return;
-  var d = document.createElement("div");
-  d.className = "info-item" + (full ? " full" : "");
-  d.innerHTML = '<div class="info-label">'+escHtml(label)+'</div><div class="info-value">'+escHtml(String(value))+'</div>';
+// ── UTILITY ───────────────────────────────────────────────────
+function mkBtn(label, cls, fn) {
+  var b=document.createElement("button"); b.className="btn "+cls; b.textContent=label;
+  if(fn) b.addEventListener("click",fn); return b;
+}
+function addInfo(grid,label,value,full) {
+  if(value===null||value===undefined||value==="") return;
+  var d=document.createElement("div"); d.className="info-item"+(full?" full":"");
+  d.innerHTML='<div class="info-label">'+esc(label)+'</div><div class="info-value">'+esc(String(value))+'</div>';
   grid.appendChild(d);
 }
-function addActionBtn(container, label, cls, fn) {
-  var b = document.createElement("button");
-  b.className = "btn " + cls;
-  b.textContent = label;
-  b.onclick = fn;
-  container.appendChild(b);
-  return b;
-}
-function formatDate(val) {
-  if (!val) return null;
-  var d = new Date(val);
-  if (isNaN(d)) return null;
-  return d.toLocaleDateString("en-US",{month:"short",day:"numeric",year:"numeric"});
-}
-function fmtMonthYear(d) { return d.toLocaleString("default",{month:"short"}) + " " + d.getFullYear(); }
-function formatPhone(val) {
-  if (!val) return null;
-  var d = String(val).replace(/\D/g,"");
-  return d.length === 10 ? "("+d.slice(0,3)+") "+d.slice(3,6)+"-"+d.slice(6) : val;
-}
-function swap(hideId, showId) {
-  document.getElementById(hideId).classList.add("hidden");
-  document.getElementById(showId).classList.remove("hidden");
-}
-function setLoading(id, loading, label) {
-  var b = document.getElementById(id);
-  b.disabled = loading;
-  b.textContent = loading ? "Please wait…" : label;
-}
-function showMsg(id, type, text) {
-  var el = document.getElementById(id);
-  el.className = "msg " + type;
-  el.textContent = text;
-  el.style.display = "block";
-}
-function clearMsg(id) {
-  var el = document.getElementById(id);
-  el.style.display = "none"; el.textContent = "";
-}
-function escHtml(s) {
-  return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
-}
-// Attach ALL event listeners once DOM is ready
-document.addEventListener("DOMContentLoaded", function() {
-
-  // ── Login form ───────────────────────────────────────────────
-  var emailInput = document.getElementById("email-input");
-  var sendBtn    = document.getElementById("send-btn");
-  var verifyBtn  = document.getElementById("verify-btn");
-  var backBtn    = document.getElementById("back-btn");
-  if (emailInput) emailInput.addEventListener("input", validateEmailInput);
-  if (sendBtn)    sendBtn.addEventListener("click",    sendCode);
-  if (verifyBtn)  verifyBtn.addEventListener("click",  verifyCode);
-  if (backBtn)    backBtn.addEventListener("click",    goBack);
-
-  // ── Dashboard nav ────────────────────────────────────────────
-  var logoutBtn = document.getElementById("logout-btn");
-  if (logoutBtn) logoutBtn.addEventListener("click", logout);
-
-  // ── Tabs (use event delegation on the .tabs container) ───────
-  var tabsContainer = document.querySelector(".tabs");
-  if (tabsContainer) {
-    tabsContainer.addEventListener("click", function(e) {
-      var btn = e.target.closest(".tab");
-      if (!btn) return;
-      var id = btn.id;
-      var name = id.replace("tab-btn-", "");
-      switchTab(name, btn);
-    });
-  }
-
-  // ── Profile edit ─────────────────────────────────────────────
-  var editProfileBtn  = document.getElementById("edit-profile-btn");
-  var saveProfileBtn  = document.getElementById("save-profile-btn");
-  var cancelEditBtn   = document.getElementById("cancel-edit-btn");
-  if (editProfileBtn) editProfileBtn.addEventListener("click", startEditProfile);
-  if (saveProfileBtn) saveProfileBtn.addEventListener("click", saveProfile);
-  if (cancelEditBtn)  cancelEditBtn.addEventListener("click",  cancelEditProfile);
-
-  // ── Add membership ───────────────────────────────────────────
-  var showAddBtn    = document.getElementById("show-add-member-btn");
-  var submitAddBtn  = document.getElementById("submit-add-member-btn");
-  var cancelAddBtn  = document.getElementById("cancel-add-member-btn");
-  if (showAddBtn)   showAddBtn.addEventListener("click",   showAddMemberForm);
-  if (submitAddBtn) submitAddBtn.addEventListener("click", submitAddMember);
-  if (cancelAddBtn) cancelAddBtn.addEventListener("click", function() {
-    document.getElementById("add-member-card").style.display = "none";
-  });
-
-  // ── Modal ────────────────────────────────────────────────────
-  var modalCancelBtn = document.getElementById("modal-cancel-btn");
-  if (modalCancelBtn) modalCancelBtn.addEventListener("click", closeModal);
-});
-
-document.addEventListener("keydown", function(e) {
-  if (e.key !== "Enter") return;
-  if (e.target && e.target.tagName === "BUTTON") return;
-  if (!document.getElementById("step-code").classList.contains("hidden")) verifyCode();
-  else if (!document.getElementById("step-email").classList.contains("hidden")) sendCode();
-});
+function safeDate(val){ if(!val) return null; var d=new Date(val); return isNaN(d.getTime())?null:d; }
+function fmtDate(val){ var d=safeDate(val); return d?d.toLocaleDateString("en-US",{month:"short",day:"numeric",year:"numeric"}):null; }
+function fmtMonthYear(d){ return d.toLocaleString("default",{month:"short"})+" "+d.getFullYear(); }
+function fmtPhone(val){ if(!val) return null; var d=String(val).replace(/\D/g,""); return d.length===10?"("+d.slice(0,3)+") "+d.slice(3,6)+"-"+d.slice(6):val; }
+function swap(hideId,showId){ document.getElementById(hideId).classList.add("hidden"); document.getElementById(showId).classList.remove("hidden"); }
+function setLoading(id,loading,label){ var b=document.getElementById(id); b.disabled=loading; b.textContent=loading?"Please wait…":label; }
+function showMsg(id,type,text){ var el=document.getElementById(id); el.className="msg "+type; el.textContent=text; el.style.display="block"; }
+function clearMsg(id){ var el=document.getElementById(id); if(el){el.style.display="none";el.textContent="";} }
+function esc(s){ return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
 </script>
 </body>
 </html>

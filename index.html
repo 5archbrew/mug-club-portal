@@ -716,10 +716,11 @@ function renderMembershipActions(m, displayStatus) {
     }
   }
   if (s==="expired"||s==="cancelled") {
-    el.appendChild(mkBtn("Renew Membership","btn-success",function(){
-      confirmAction("Renew your membership?","Your membership will be renewed for one year from today.",callRenewMembership);
+    el.appendChild(mkBtn("Rejoin the Mug Club 🍺","btn-success",function(){
+      confirmAction("Rejoin the Mug Club?",
+        "We'll send you an invoice to reactivate your membership. Your membership will be active once payment is received.",
+        callReactivateMembership);
     }));
-    el.appendChild(mkBtn("💳 Pay Now","btn-secondary",showPaymentInfo));
   }
   if (s==="pending") {
     var pb=mkBtn("⏳ Awaiting Payment","btn-secondary",null); pb.disabled=true; el.appendChild(pb);
@@ -775,6 +776,34 @@ function callRenewMembership() {
     function(e){showMsg("membership-msg","error","Error: "+e.message);}
   );
 }
+function callReactivateMembership() {
+  callServer("reactivateMembership", { email: currentEmail, rowIndex: allMembers[activeMemberIdx]._rowIndex },
+    function(r) {
+      if (r && r.success) {
+        allMembers = r.members;
+        renderMemberCard(allMembers[activeMemberIdx]);
+        // Now create and send the invoice
+        showMsg("membership-msg","info","Creating your invoice…");
+        callServer("createMembershipInvoice", { email: currentEmail, rowIndex: allMembers[activeMemberIdx]._rowIndex },
+          function(inv) {
+            if (inv && inv.success) {
+              showMsg("membership-msg","success",
+                "Welcome back! Invoice #" + inv.invoiceNum + " sent to your email. " +
+                "Your membership will reactivate automatically once payment is received.");
+            } else {
+              showMsg("membership-msg","error","Could not create invoice: " + ((inv && inv.message) || "unknown error"));
+            }
+          },
+          function(e){ showMsg("membership-msg","error","Invoice error: " + e.message); }
+        );
+      } else {
+        showMsg("membership-msg","error",(r&&r.message)||"Could not reactivate. Please try again.");
+      }
+    },
+    function(e){ showMsg("membership-msg","error","Error: " + e.message); }
+  );
+}
+
 function callRequestAutopay() {
   callServer("requestAutopay",{email:currentEmail,rowIndex:allMembers[activeMemberIdx]._rowIndex},
     function(r){if(r&&r.success){allMembers=r.members;renderMemberCard(allMembers[activeMemberIdx]);showMsg("membership-msg","success","Autopay request sent! We'll be in touch shortly.");}},

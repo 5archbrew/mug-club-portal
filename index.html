@@ -709,7 +709,13 @@ function renderMembershipActions(m, displayStatus) {
       }));
     }
     el.appendChild(mkBtn("💳 Pay Now","btn-secondary",showPaymentInfo));
-    if (!m._cancelPending) {
+    if (m._cancelPending) {
+      el.appendChild(mkBtn("Undo Cancellation","btn-secondary",function(){
+        confirmAction("Undo your cancellation?",
+          "Your membership will remain active and renew as normal.",
+          callUndoCancellation);
+      }));
+    } else {
       el.appendChild(mkBtn("Cancel Membership","btn-danger",function(){
         confirmAction("Cancel your membership?","Your membership stays active until "+(fmtDate(m.expireDate)||"expiry")+", then will not renew.",callCancelMembership);
       }));
@@ -776,6 +782,21 @@ function callRenewMembership() {
     function(e){showMsg("membership-msg","error","Error: "+e.message);}
   );
 }
+function callUndoCancellation() {
+  callServer("undoCancellation", { email: currentEmail, rowIndex: allMembers[activeMemberIdx]._rowIndex },
+    function(r) {
+      if (r && r.success) {
+        allMembers = r.members;
+        renderMemberCard(allMembers[activeMemberIdx]);
+        showMsg("membership-msg","success","Cancellation reversed — your membership will continue as normal.");
+      } else {
+        showMsg("membership-msg","error",(r&&r.message)||"Could not undo cancellation. Please try again.");
+      }
+    },
+    function(e){ showMsg("membership-msg","error","Error: " + e.message); }
+  );
+}
+
 function callReactivateMembership() {
   callServer("reactivateMembership", { email: currentEmail, rowIndex: allMembers[activeMemberIdx]._rowIndex },
     function(r) {
